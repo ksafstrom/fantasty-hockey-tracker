@@ -50,7 +50,26 @@ def clean_name(value):
     return value.casefold().replace(".", "").strip()
 
 
+# Explicit NHL IDs for players with duplicate names.
+PLAYER_ID_OVERRIDES = {
+    "elias pettersson": 8483678,  # Vancouver centerman
+}
+
+
+
 def resolve_player(name: str):
+    # Check explicitly configured NHL IDs first.
+    override_id = PLAYER_ID_OVERRIDES.get(clean_name(name))
+
+    if override_id is not None:
+        return {
+            "playerId": override_id,
+            "name": name,
+            "positionCode": "C",
+            "teamAbbrev": "VAN"
+        }
+
+    # Otherwise, use the NHL player search API.
     results = get_url(
         SEARCH_URL,
         {
@@ -68,7 +87,8 @@ def resolve_player(name: str):
     if len(matches) != 1:
         raise ValueError(
             f"Expected one exact NHL match for {name}; "
-            f"found {len(matches)}"
+            f"found {len(matches)}. "
+            f"Add this player to PLAYER_ID_OVERRIDES."
         )
 
     return matches[0]
