@@ -3,8 +3,8 @@ name: Update Fantasy Hockey Tracker
 on:
   workflow_dispatch:
   schedule:
-    # Every 30 minutes during the season. GitHub Actions may delay scheduled jobs.
-    - cron: '0 13 * * *'
+    # Daily at 1:00 am PST (8:00 UTC) during the season. GitHub Actions may delay scheduled jobs.
+    - cron: '0 8 * * *'
 
 permissions:
   contents: read
