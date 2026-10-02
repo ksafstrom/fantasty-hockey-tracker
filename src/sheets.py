@@ -1,3 +1,27 @@
+from __future__ import annotations
+
+import json
+import os
+from typing import Any
+
+import gspread
+from google.oauth2.service_account import Credentials
+
+SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
+
+
+def get_client() -> gspread.Client:
+    raw = os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON")
+    if not raw:
+        path = os.environ.get("GOOGLE_SERVICE_ACCOUNT_FILE", "service-account.json")
+        with open(path, "r", encoding="utf-8") as f:
+            info = json.load(f)
+    else:
+        info = json.loads(raw)
+    credentials = Credentials.from_service_account_info(info, scopes=SCOPES)
+    return gspread.authorize(credentials)
+
+
 
 def update_sheet(
     spreadsheet_id: str,
