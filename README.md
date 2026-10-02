@@ -1,11 +1,11 @@
 # Fantasy Hockey Live Tracker
 
-Automated 2026-27 NHL fantasy tracker for a custom league:
+Automated NHL fantasy tracker for a custom league:
 
 - Skaters: 1 point per goal + 1 point per assist + 0.1 point per shot on goal
 - Goalies: 1 point per win + 2 additional points per shutout
 
-The tracker pulls current statistics from the NHL web API and writes the results to Google Sheets. It is designed to run locally or automatically every 30 minutes with GitHub Actions.
+The tracker pulls current statistics from the NHL web API and writes the results to Google Sheets. It is designed to run locally or automatically daily with GitHub Actions.
 
 ## 1. Create the Google Sheet
 
@@ -81,7 +81,7 @@ Push the repository to GitHub. The workflow runs every 30 minutes and can also b
 
 ## 5. Change your player list
 
-Edit `players.json`. The duplicate Vince Dunn from the original list has been reduced to one entry.
+Edit `players.json`.
 
 The current season is configured as `20262027`.
 
