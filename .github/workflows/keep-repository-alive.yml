@@ -1,0 +1,46 @@
+
+name: Keep Repository Active
+
+on:
+  schedule:
+    # Every Monday at 08:17 UTC
+    - cron: '17 8 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  keep-alive:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Check repository inactivity
+        id: inactivity
+        shell: bash
+        run: |
+          LAST_COMMIT=$(git log -1 --format=%ct)
+          NOW=$(date +%s)
+          DAYS=$(( (NOW - LAST_COMMIT) / 86400 ))
+
+          echo "Days since last commit: $DAYS"
+
+          if [ "$DAYS" -ge 30 ]; then
+            echo "needs_commit=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "needs_commit=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create keep-alive commit
+        if: steps.inactivity.outputs.needs_commit == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git commit --allow-empty -m "chore: keep scheduled workflows active"
+          git push origin HEAD:${{ github.event.repository.default_branch }}
